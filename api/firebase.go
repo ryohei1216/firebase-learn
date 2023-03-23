@@ -3,9 +3,11 @@ package api
 import (
 	"context"
 	"log"
+	"strings"
 
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/auth"
+	"github.com/gin-gonic/gin"
 	"google.golang.org/api/option"
 )
 
@@ -23,4 +25,18 @@ func NewFirebaseClient() *auth.Client {
 	}
 
 	return client
+}
+
+func AuthMiddleware(client *auth.Client) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authHeader := c.GetHeader(("Authorization"))
+		idToken := strings.Replace(authHeader, "Bearer ", "", 1)
+
+		token, err := client.VerifyIDToken(context.Background(), idToken)
+		if err != nil {
+			c.JSON(401, gin.H{"message": "invalid id"})
+			c.Abort()
+		}
+		log.Printf("Verified ID token: %v\n", token)
+	}
 }

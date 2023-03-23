@@ -14,6 +14,9 @@ func main() {
 	r := gin.Default()
 
 	fc := api.NewFirebaseClient()
+
+	r.Use(api.AuthMiddleware(fc))
+	
 	userRepository := infrastructure.NewUserRepository(fc)
 	userUsecase := usecase.NewUserUsecase(userRepository)
 	userService := service.NewUserService(userUsecase)
