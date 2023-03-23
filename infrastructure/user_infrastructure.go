@@ -19,7 +19,7 @@ func NewUserRepository(firebaseClient *auth.Client) repository.UserRepository {
 }
 
 func (ur userRepository) Get(ctx context.Context, uid string) (*auth.UserRecord, error) {
-	u, err := ur.Get(ctx, uid)
+	u, err := ur.fc.GetUser(ctx, uid)
 	if err != nil {
 		log.Printf("failed to get user: %v", err)
 		return nil, err
