@@ -1,28 +1,25 @@
-package repository
+package infrastructure
 
 import (
 	"context"
 	"log"
 
 	"firebase.google.com/go/v4/auth"
+	"github.com/ryohei1216/firebase-learn/domain/repository"
 )
 
-type UserRepository interface {
-	Get(ctx context.Context, uid string) (*auth.UserRecord, error)
-}
-
 type userRepository struct {
-	firebaseClient *auth.Client
+	fc *auth.Client
 }
 
-func NewUserRepository(firebaseClient *auth.Client) UserRepository {
+func NewUserRepository(firebaseClient *auth.Client) repository.UserRepository {
 	return &userRepository{
-		firebaseClient: firebaseClient,
+		fc: firebaseClient,
 	}
 }
 
 func (ur userRepository) Get(ctx context.Context, uid string) (*auth.UserRecord, error) {
-	u, err := ur.firebaseClient.GetUser(ctx, uid)
+	u, err := ur.Get(ctx, uid)
 	if err != nil {
 		log.Printf("failed to get user: %v", err)
 		return nil, err

@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/ryohei1216/firebase-learn/api"
-	"github.com/ryohei1216/firebase-learn/repository"
+	"github.com/ryohei1216/firebase-learn/infrastructure"
 	"github.com/ryohei1216/firebase-learn/service"
 	"github.com/ryohei1216/firebase-learn/usecase"
 )
@@ -14,7 +14,7 @@ func main() {
 	r := gin.Default()
 
 	fc := api.NewFirebaseClient()
-	userRepository := repository.NewUserRepository(fc)
+	userRepository := infrastructure.NewUserRepository(fc)
 	userUsecase := usecase.NewUserUsecase(userRepository)
 	userService := service.NewUserService(userUsecase)
 

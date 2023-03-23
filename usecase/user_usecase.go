@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"firebase.google.com/go/v4/auth"
-	"github.com/ryohei1216/firebase-learn/repository"
+	"github.com/ryohei1216/firebase-learn/domain/repository"
 )
 
 type UserUsecase interface {
