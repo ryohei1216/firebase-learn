@@ -32,11 +32,11 @@ func AuthMiddleware(client *auth.Client) gin.HandlerFunc {
 		authHeader := c.GetHeader(("Authorization"))
 		idToken := strings.Replace(authHeader, "Bearer ", "", 1)
 
-		token, err := client.VerifyIDToken(context.Background(), idToken)
+		_, err := client.VerifyIDToken(context.Background(), idToken)
 		if err != nil {
 			c.JSON(401, gin.H{"message": "invalid id"})
 			c.Abort()
 		}
-		log.Printf("Verified ID token: %v\n", token)
+		log.Println("Verified ID token:")
 	}
 }
