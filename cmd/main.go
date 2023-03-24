@@ -28,10 +28,11 @@ func main() {
 			c.JSON(http.StatusInternalServerError, err)
 		}
 
-		c.JSON(200, gin.H{
+		c.JSON(http.StatusOK, gin.H{
 			"user": u,
 		})
 	})
+
 	r.POST("/user/:uid", func(c *gin.Context) {
 		uid := c.Param("uid")
 		var json struct{
@@ -49,6 +50,16 @@ func main() {
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{"user": u})
+	})
+
+	r.DELETE("/user/:uid", func(c *gin.Context) {
+		uid := c.Param("uid")
+		err := userService.DeleteUser(c.Request.Context(), uid)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, err)
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"user": "deleted"})
 	})
 	r.Run() // 0.0.0.0:8080 でサーバーを立てます。
 }

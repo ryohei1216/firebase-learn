@@ -39,3 +39,13 @@ func (ur userRepository) Update(ctx context.Context, uid string, user *user.User
 
 	return u, nil
 }
+
+func (ur userRepository) Delete(ctx context.Context, uid string) error {
+	err := ur.fc.DeleteUser(ctx, uid)
+	if err != nil {
+		log.Printf("failed to delete user: %v", err)
+		return err
+	}
+
+	return nil
+}
