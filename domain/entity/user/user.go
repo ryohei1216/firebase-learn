@@ -8,20 +8,10 @@ type User struct {
 	UserRecord *auth.UserRecord
 }
 
-func New(email string, password string) (*User, error) {
-	e, err := NewEmail(email)
-	if err != nil {
-		return nil, err
-	}
-
-	p, err := NewPassword(password)
-	if err != nil {
-		return nil, err
-	}
-
+func New(email Email, password Password) (*User, error) {
 	return &User{
-		Email:    e,
-		Password: p,
+		Email:    email,
+		Password: password,
 	}, nil
 }
 

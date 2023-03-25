@@ -41,7 +41,17 @@ func (uu userUsecase) GetUser(ctx context.Context, uid string) (*user.User, erro
 }
 
 func (uu userUsecase) UpdateUser(ctx context.Context, uid string, email string, password string) (*user.User, error) {
-	u, err := user.New(email, password)
+	e, err := user.NewEmail(email)
+	if err != nil {
+		return nil, err
+	}
+
+	p, err := user.NewPassword(password)
+	if err != nil {
+		return nil, err
+	}
+	
+	u, err := user.New(e, p)
 	if err != nil {
 		return nil, err
 	}
