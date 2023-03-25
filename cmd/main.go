@@ -21,7 +21,7 @@ func main() {
 	userUsecase := usecase.NewUserUsecase(userRepository)
 	userService := service.NewUserService(userUsecase)
 
-	r.GET("/user/:uid", func(c *gin.Context) {
+	r.GET("/users/:uid", func(c *gin.Context) {
 		uid := c.Param("uid")
 		u, err := userService.GetUser(c.Request.Context(), uid)
 		if err != nil {
@@ -33,7 +33,7 @@ func main() {
 		})
 	})
 
-	r.POST("/user/:uid", func(c *gin.Context) {
+	r.POST("/users/:uid", func(c *gin.Context) {
 		uid := c.Param("uid")
 		var json struct{
 			Email    string `json:"email"`
@@ -52,7 +52,7 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{"user": u})
 	})
 
-	r.DELETE("/user/:uid", func(c *gin.Context) {
+	r.DELETE("/users/:uid", func(c *gin.Context) {
 		uid := c.Param("uid")
 		err := userService.DeleteUser(c.Request.Context(), uid)
 		if err != nil {
