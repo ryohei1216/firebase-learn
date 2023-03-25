@@ -15,11 +15,30 @@ func main() {
 
 	fc := api.NewFirebaseClient()
 
-	r.Use(api.AuthMiddleware(fc))
+	// TODO: create時の対策考える
+	// r.Use(api.AuthMiddleware(fc))
 
 	userRepository := infrastructure.NewUserRepository(fc)
 	userUsecase := usecase.NewUserUsecase(userRepository)
 	userService := service.NewUserService(userUsecase)
+
+	r.POST("/users", func(c *gin.Context) {
+		var json struct{
+			Email    string `json:"email"`
+			Password string `json:"password"`
+		}
+		if err := c.ShouldBindJSON(&json); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		u, err := userService.CreateUser(c.Request.Context(), json.Email, json.Password)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, err)
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"user": u})
+	})
 
 	r.GET("/users/:uid", func(c *gin.Context) {
 		uid := c.Param("uid")

@@ -19,6 +19,16 @@ func NewUserRepository(firebaseClient *auth.Client) repository.UserRepository {
 	}
 }
 
+func (ur userRepository) Create(ctx context.Context, user *user.User) (*auth.UserRecord, error) {
+	params := (&auth.UserToCreate{}).Email(string(user.Email)).Password(string(user.Password))
+	u, err := ur.fc.CreateUser(ctx, params)
+	if err != nil {
+		log.Printf("failed to create user: %v", err)
+	}
+
+	return u, nil
+}
+
 func (ur userRepository) Get(ctx context.Context, uid string) (*auth.UserRecord, error) {
 	u, err := ur.fc.GetUser(ctx, uid)
 	if err != nil {

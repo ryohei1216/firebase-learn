@@ -8,6 +8,7 @@ import (
 )
 
 type UserService interface {
+	CreateUser(ctx context.Context, email string, password string) (*user.User, error)
 	GetUser(ctx context.Context, uid string) (*user.User, error)
 	UpdateUser(ctx context.Context, uid string , email string, password string) (*user.User, error)
 	DeleteUser(ctx context.Context, uid string) error
@@ -21,6 +22,15 @@ func NewUserService(uu usecase.UserUsecase) UserService {
 	return &userService{
 		uu: uu,
 	}
+}
+
+func (us *userService) CreateUser(ctx context.Context, email string, password string) (*user.User, error) {
+	u, err := us.uu.CreateUser(ctx, email, password)
+	if err != nil {
+		return nil, err
+	}
+
+	return u, nil
 }
 
 func (us *userService) GetUser(ctx context.Context, uid string) (*user.User, error) {

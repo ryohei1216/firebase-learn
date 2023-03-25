@@ -9,6 +9,7 @@ import (
 )
 
 type UserUsecase interface {
+	CreateUser(ctx context.Context, email string, password string) (*user.User, error)
 	GetUser(ctx context.Context, uid string) (*user.User, error)
 	UpdateUser(ctx context.Context, uid string, email string, password string) (*user.User, error)
 	DeleteUser(ctx context.Context, uid string) error
@@ -22,6 +23,30 @@ func NewUserUsecase(ur repository.UserRepository) UserUsecase {
 	return &userUsecase{
 		ur: ur,
 	}
+}
+
+func (uu userUsecase) CreateUser(ctx context.Context, email string, password string) (*user.User, error) {
+	e, err := user.NewEmail(email)
+	if err != nil {
+		return nil, err
+	}
+
+	p, err := user.NewPassword(password)
+	if err != nil {
+		return nil, err
+	}
+
+	u, err := user.New(e, p)
+	if err != nil {
+		return nil, err
+	}
+	ur, err := uu.ur.Create(ctx, u)
+	if err != nil {
+		return nil, err
+	}
+	u.SetUserRecord(ur)
+
+	return u, nil
 }
 
 func (uu userUsecase) GetUser(ctx context.Context, uid string) (*user.User, error) {
@@ -50,7 +75,7 @@ func (uu userUsecase) UpdateUser(ctx context.Context, uid string, email string, 
 	if err != nil {
 		return nil, err
 	}
-	
+
 	u, err := user.New(e, p)
 	if err != nil {
 		return nil, err
