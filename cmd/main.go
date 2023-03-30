@@ -14,12 +14,15 @@ func main() {
 	r := gin.Default()
 
 	fc := api.NewAuthClient()
+	sc := api.NewStoreClient()
 
 	// TODO: create時の対策考える
 	// r.Use(api.AuthMiddleware(fc))
 
-	userRepository := infrastructure.NewUserRepository(fc)
-	userUsecase := usecase.NewUserUsecase(userRepository)
+	userRecordRepository := infrastructure.NewUserRecordRepository(fc)
+	userRepository := infrastructure.NewUserRepository(sc)
+
+	userUsecase := usecase.NewUserUsecase(userRecordRepository, userRepository)
 	userService := service.NewUserService(userUsecase)
 
 	r.POST("/users", func(c *gin.Context) {

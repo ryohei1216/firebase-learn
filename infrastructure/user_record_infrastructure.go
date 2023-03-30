@@ -13,7 +13,7 @@ type userRecordRepository struct {
 	fc *auth.Client
 }
 
-func NewUserRepository(firebaseClient *auth.Client) repository.UserRecordRepository {
+func NewUserRecordRepository(firebaseClient *auth.Client) repository.UserRecordRepository {
 	return &userRecordRepository{
 		fc: firebaseClient,
 	}

@@ -16,17 +16,19 @@ type UserUsecase interface {
 }
 
 type userUsecase struct {
-	ur repository.UserRecordRepository
+	urr repository.UserRecordRepository
+	ur  repository.UserRepository
 }
 
-func NewUserUsecase(ur repository.UserRecordRepository) UserUsecase {
+func NewUserUsecase(urr repository.UserRecordRepository, ur  repository.UserRepository) UserUsecase {
 	return &userUsecase{
-		ur: ur,
+		urr: urr,
+		ur:  ur,
 	}
 }
 
 func (uu userUsecase) CreateUser(ctx context.Context, email string, password string) (*user.User, error) {
-	ur, err := uu.ur.Create(ctx, email, password)
+	ur, err := uu.urr.Create(ctx, email, password)
 	if err != nil {
 		return nil, err
 	}
@@ -54,11 +56,16 @@ func (uu userUsecase) CreateUser(ctx context.Context, email string, password str
 
 	u.SetUserRecord(ur)
 
+	_, err = uu.ur.Create(ctx, *u)
+	if err != nil {
+		return nil, err
+	}
+
 	return u, nil
 }
 
 func (uu userUsecase) GetUser(ctx context.Context, uid string) (*user.User, error) {
-	ur, err := uu.ur.Get(ctx, uid)
+	ur, err := uu.urr.Get(ctx, uid)
 	if err != nil {
 		log.Printf("failed to get user: %v", err)
 		return nil, err
@@ -88,7 +95,7 @@ func (uu userUsecase) UpdateUser(ctx context.Context, uid string, email string, 
 	if err != nil {
 		return nil, err
 	}
-	ur, err := uu.ur.Update(ctx, uid, u)
+	ur, err := uu.urr.Update(ctx, uid, u)
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +109,7 @@ func (uu userUsecase) UpdateUser(ctx context.Context, uid string, email string, 
 }
 
 func (uu userUsecase) DeleteUser(ctx context.Context, uid string) error {
-	err := uu.ur.Delete(ctx, uid)
+	err := uu.urr.Delete(ctx, uid)
 	if err != nil {
 		return nil
 	}
