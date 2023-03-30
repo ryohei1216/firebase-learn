@@ -9,18 +9,18 @@ import (
 	"github.com/ryohei1216/firebase-learn/domain/repository"
 )
 
-type userRepository struct {
+type userRecordRepository struct {
 	fc *auth.Client
 }
 
-func NewUserRepository(firebaseClient *auth.Client) repository.UserRepository {
-	return &userRepository{
+func NewUserRepository(firebaseClient *auth.Client) repository.UserRecordRepository {
+	return &userRecordRepository{
 		fc: firebaseClient,
 	}
 }
 
-func (ur userRepository) Create(ctx context.Context, user *user.User) (*auth.UserRecord, error) {
-	params := (&auth.UserToCreate{}).Email(string(user.Email)).Password(string(user.Password))
+func (ur userRecordRepository) Create(ctx context.Context, email string, password string) (*auth.UserRecord, error) {
+	params := (&auth.UserToCreate{}).Email(email).Password(password)
 	u, err := ur.fc.CreateUser(ctx, params)
 	if err != nil {
 		log.Printf("failed to create user: %v", err)
@@ -29,7 +29,7 @@ func (ur userRepository) Create(ctx context.Context, user *user.User) (*auth.Use
 	return u, nil
 }
 
-func (ur userRepository) Get(ctx context.Context, uid string) (*auth.UserRecord, error) {
+func (ur userRecordRepository) Get(ctx context.Context, uid string) (*auth.UserRecord, error) {
 	u, err := ur.fc.GetUser(ctx, uid)
 	if err != nil {
 		log.Printf("failed to get user: %v", err)
@@ -39,7 +39,7 @@ func (ur userRepository) Get(ctx context.Context, uid string) (*auth.UserRecord,
 	return u, nil
 }
 
-func (ur userRepository) Update(ctx context.Context, uid string, user *user.User) (*auth.UserRecord, error) {
+func (ur userRecordRepository) Update(ctx context.Context, uid string, user *user.User) (*auth.UserRecord, error) {
 	params := (&auth.UserToUpdate{}).Email(string(user.Email)).Password(string(user.Password))
 	u, err := ur.fc.UpdateUser(ctx, uid, params)
 	if err != nil {
@@ -50,7 +50,7 @@ func (ur userRepository) Update(ctx context.Context, uid string, user *user.User
 	return u, nil
 }
 
-func (ur userRepository) Delete(ctx context.Context, uid string) error {
+func (ur userRecordRepository) Delete(ctx context.Context, uid string) error {
 	err := ur.fc.DeleteUser(ctx, uid)
 	if err != nil {
 		log.Printf("failed to delete user: %v", err)

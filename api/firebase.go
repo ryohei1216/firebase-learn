@@ -11,7 +11,7 @@ import (
 	"google.golang.org/api/option"
 )
 
-func NewFirebaseClient() *auth.Client {
+func NewAuthClient() *auth.Client {
 	opt := option.WithCredentialsFile("firebase_secret.json")
 	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {

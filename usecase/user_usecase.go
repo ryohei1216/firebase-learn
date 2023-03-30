@@ -16,16 +16,26 @@ type UserUsecase interface {
 }
 
 type userUsecase struct {
-	ur repository.UserRepository
+	ur repository.UserRecordRepository
 }
 
-func NewUserUsecase(ur repository.UserRepository) UserUsecase {
+func NewUserUsecase(ur repository.UserRecordRepository) UserUsecase {
 	return &userUsecase{
 		ur: ur,
 	}
 }
 
 func (uu userUsecase) CreateUser(ctx context.Context, email string, password string) (*user.User, error) {
+	ur, err := uu.ur.Create(ctx, email, password)
+	if err != nil {
+		return nil, err
+	}
+
+	id, err := user.NewID(ur.UID)
+	if err != nil {
+		return nil, err
+	}
+
 	e, err := user.NewEmail(email)
 	if err != nil {
 		return nil, err
@@ -36,14 +46,12 @@ func (uu userUsecase) CreateUser(ctx context.Context, email string, password str
 		return nil, err
 	}
 
-	u, err := user.New(e, p)
+	// これをfirestoreにつめる
+	u, err := user.New(id, e, p)
 	if err != nil {
 		return nil, err
 	}
-	ur, err := uu.ur.Create(ctx, u)
-	if err != nil {
-		return nil, err
-	}
+
 	u.SetUserRecord(ur)
 
 	return u, nil
@@ -56,7 +64,7 @@ func (uu userUsecase) GetUser(ctx context.Context, uid string) (*user.User, erro
 		return nil, err
 	}
 
-	u, err := user.New("", "")
+	u, err := user.New("", "", "")
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +84,7 @@ func (uu userUsecase) UpdateUser(ctx context.Context, uid string, email string, 
 		return nil, err
 	}
 
-	u, err := user.New(e, p)
+	u, err := user.New("", e, p)
 	if err != nil {
 		return nil, err
 	}

@@ -7,8 +7,8 @@ import (
 	"github.com/ryohei1216/firebase-learn/domain/entity/user"
 )
 
-type UserRepository interface {
-	Create(ctx context.Context, user *user.User) (*auth.UserRecord, error)
+type UserRecordRepository interface {
+	Create(ctx context.Context, email string, password string) (*auth.UserRecord, error)
 	Get(ctx context.Context, uid string) (*auth.UserRecord, error)
 	Update(ctx context.Context, uid string, user *user.User) (*auth.UserRecord, error)
 	Delete(ctx context.Context, uid string) error

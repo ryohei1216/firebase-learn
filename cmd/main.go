@@ -13,7 +13,7 @@ import (
 func main() {
 	r := gin.Default()
 
-	fc := api.NewFirebaseClient()
+	fc := api.NewAuthClient()
 
 	// TODO: create時の対策考える
 	// r.Use(api.AuthMiddleware(fc))
