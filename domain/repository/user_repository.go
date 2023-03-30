@@ -8,4 +8,5 @@ import (
 
 type UserRepository interface {
 	Create(ctx context.Context, u user.User) (*user.User, error)
+	Get(ctx context.Context, uid string) (*user.User, error)
 }

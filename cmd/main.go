@@ -48,6 +48,7 @@ func main() {
 		u, err := userService.GetUser(c.Request.Context(), uid)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, err)
+			return
 		}
 
 		c.JSON(http.StatusOK, gin.H{
